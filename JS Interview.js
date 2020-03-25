@@ -1,3 +1,11 @@
+/**
+ * @author Zhaoyu Wang
+ * @email wang9535@umn.edu
+ * @create date 2020-03-24 20:17:00
+ * @modify date 2020-03-24 20:17:00
+ * @desc Basic JavaScript Interview questions
+ */
+
 /** 值类型 */
 let a = 10  
     b = a
@@ -309,3 +317,23 @@ for (let i = 0; i < 10; i++) {
     })
     document.body.appendChild(a)
 }
+
+/** 单线程
+ * 浏览器和node.js已支持JS启动进程 e.g: Web Worker
+ * JS和DOM渲染共用同一个线程 因为JS可修改DOM结构
+ */
+
+ /** 异步
+  * 通过callback回调函数
+  */
+ console.log(100)
+ setTimeout(() => {
+     console.log(200)
+ }, 1000)
+ console.log(300) // 100 300 200
+
+ /** 异步和同步
+  * 基于JS是单线程语言
+  * 异步不阻塞后面代码执行
+  * 同步阻塞后面代码执行
+  */
