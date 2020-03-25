@@ -24,22 +24,22 @@ const n = 100 // number
 const b = true // boolean
 const s = Symbol('s') // symbol
 /** 常见引用类型 */
-const obj = { x: 100 } // object
-const arr = ['a', 'b', 'c'] // object
+const obj = { x: 100 } // Object
+const arr = ['a', 'b', 'c'] // Array
 const n = null // 特殊引用类型 指针指向空地址
 /** 函数类型 */
 function fn() {} // 不用于存储数据 没有拷贝 复制函数
 
 /** 类型判断-typeof */ 
-    // 判断所有值类型
-    let a;  typeof a // 'undefined'
-    // 判断函数
-    typeof console.log // 'function'
-    typeof function () {} // 'function'
-    // 识别引用类型(不能再继续识别) e.g: 无法识别 null array arguments
-    typeof null // 'object'
-    typeof ['a', 'b'] // 'object
-    typeof { x : 100 } // 'object
+// 判断所有值类型
+let a;  typeof a // 'undefined'
+// 判断函数
+typeof console.log // 'function'
+typeof function () {} // 'function'
+// 识别引用类型(不能再继续识别) e.g: 无法识别 null array arguments
+typeof null // 'object'
+typeof ['a', 'b'] // 'object
+typeof { x : 100 } // 'object
 
 /** 深拷贝 
  * @param {Object} obj 拷贝对象  
@@ -323,17 +323,257 @@ for (let i = 0; i < 10; i++) {
  * JS和DOM渲染共用同一个线程 因为JS可修改DOM结构
  */
 
- /** 异步
-  * 通过callback回调函数
-  */
- console.log(100)
- setTimeout(() => {
-     console.log(200)
- }, 1000)
- console.log(300) // 100 300 200
+/** 异步
+ * 通过callback回调函数
+ */
+console.log(100)
+setTimeout(() => {
+    console.log(200)
+}, 1000)
+console.log(300) // 100 300 200
 
- /** 异步和同步
-  * 基于JS是单线程语言
-  * 异步不阻塞后面代码执行
-  * 同步阻塞后面代码执行
-  */
+/** 异步和同步
+ * 基于JS是单线程语言
+ * 异步不阻塞后面代码执行
+ * 同步阻塞后面代码执行
+ */
+
+/** 异步应用场景
+ * 网络请求 e.g: ajax图片加载
+ * 定时任务 e.g: setTimeout
+ */
+// 加载ajax
+console.log('start')
+$.get('./data1.json', function(data1) {
+    console.log(data1)
+}) 
+console.log('end')
+
+// 图片加载
+console.log('start')
+let img = document.createElement('img')
+img.onload = function() {
+    console.log('loaded')
+}
+img.src = '/xxx.png'
+console.log('end')
+
+// setTimeout
+console.log(100)
+setTimeout(function() {  // 一次性
+    console.log(200)
+}, 1000)
+console.log(300) // 100 300 200
+
+// setInterval
+console.log(100)
+setInterval(function() { // 循环执行
+    console.log(200)
+}, 1000)
+console.log(300) // 100 300 200
+
+/**Promise
+ * 解决callback hell
+ */
+function getData(url) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url,
+            success(data) {
+                resolve(data)
+            },
+            error(err) {
+                reject(err)
+            }
+        })
+    })
+}
+
+const url1 = '/data1.json'
+const url2 = '/data2.json'
+const url3 = '/data3.json'
+getData(url1).then(data1 => {
+    console.log(data1)
+    return getData(url2)
+}).then(data2 => {
+    console.log(data2)
+    return getData(url3)
+}).then(data3 => {
+    console.log(data3)
+}).catch(err => console.error(err)) // 防错处理
+
+/** 手写Promise加载一张图片 */
+function loadImg(src) {
+    const p = new Promise((resolve, reject) => { // resolve和reject这两个参数也是函数
+        const img = document.createElement('img')
+        img.onload = () => { // 加载成功
+            resolve(img)
+        }
+        img.onerror = () => { // 加载失败
+            const err = new Error ('图片加载失败' + src)
+            reject(err)
+        }
+        img.src = src
+        }
+    )
+    return p
+}
+
+const url1 = '/data1.json'
+const url2 = '/data2.json'
+loadImg(url1).then(img1 => {
+    console.log(img1.width)
+    return img1 // 普通对象
+}).then(img1 => {
+    console.log(img1.height)
+    return loadImg(url2) // promise实例
+}).then(img2 => {
+    console.log(img2.width)
+    return img2
+}).then(img2 => {
+    console.log(img2.height)
+}).catch(ex => console.error(ex)) // 捕捉错误
+
+/** JS Web API
+ * DOM: 网页上的DOM元素 e.g: 文本 图片
+ * BOM: 浏览器的导航 URL地址 跳转 宽高
+ * 事件绑定: 绑定事件 监听点击
+ * AJAX: 网络请求
+ * 存储: 网页中的暂存和缓存
+ */
+
+ /** DOM操作(Document Object Model) */
+// DOM本质: 从HTML文件解析出的一颗tree
+
+/** DOM节点操作
+ * 获取DOM节点
+ * property: 修改对象属性 不会体现到HTML结构中 ** 尽量使用property 能在JS机制中避免重复DOM重新渲染 **
+ * attribute: 修改HTML属性 会改变HTML结构
+ * 两者都可能引起DOM重新渲染
+ */
+// 获取DOM节点
+const div1 = document.getElementById('div1') // 元素
+const divList = document.getElementsByTagName('div') // 集合
+console.log(divList.length)
+console.log(divList[0])
+const containerList = document.getElementsByClassName('container') // 集合
+const pList = document.querySelectorAll('p') // 集合
+// property
+const p1 = pList[0]
+p1.style.width = '100px'
+console.log(p1.style.width)
+p1.className = 'red'
+console.log(p1.className)
+console.log(p1.nodeName) // tag节点的名称
+console.log(p1.nodeType) // 一般nodeType是 1
+// attribute
+p1.setAttribute('data-name', 'imooc')
+console.log(p1.getAttribute('data-name'))
+p1.setAttribute('style', 'font-size: 50px')
+console.log(p1.getAttribute('style'))
+/**DOM结构操作
+ * 新增/插入节点
+ * 获取子元素列表 获取父元素
+ * 删除子节点
+ */
+// 新增节点
+const div1 = document.getElementById('div1') 
+const div2 = document.getElementById('div2')
+// 新建节点
+const newP = document.createElement('p') 
+p1.innerHTML = 'This is newP'
+// 插入节点
+div1.appendChild(newP) 
+// 移动节点
+const p1 = document.getElementById('p1')
+div2.appendChild(p1)
+// 获取父元素
+console.log(p1.parentNode)
+// 获取子元素列表
+const div1ChildNodes = div1.childNodes
+const div1ChildNodesP = Array.prototype.slice.call(div1.childNodes).filter(child => {
+    if(child.nodeType === 1) return true // 需要正常nodeType的节点 不需要文本节点 Text: nodeType = 3
+    return false
+})
+console.log(div1ChildNodesP)
+// 删除子元素
+div1.removeChild(div1ChildNodesP[0])
+
+/** DOM性能
+ * DOM操作占CPU比较多 可能会导致浏览器重新渲染 避免频繁DOM操作
+ * 对DOM查询做缓存
+ * 将频繁操作改为一次性操作
+ */
+// DOM查询做缓存
+for (let i = 0; i < document.getElementsByTagName('p').length; i++) {
+    // 不缓存DOM查询结果 每次循环都会计算length 频繁进行DOM查询
+}
+const pList = document.getElementsByTagName('p')
+const length = pList.length
+for (let i = 0; i < length; i++) {
+    // 缓存length 只进行一次DOM查询
+}
+// 将频繁操作改为一次性操作
+const list = document.getElementById('list')
+// 创建一个文档片段 此时还没插入到DOM结构中
+const frag = document.createDocumentFragment()
+for (let i = 0; i < 10; i++) {
+    const li = document.createElement('li')
+    li.innerHTML = 'List HTML' + i
+    // 先插入文档片段中
+    frag.appendChild(li)
+}
+// 都完成后 统一插入到DOM结构中
+list.appendChild(frag)
+
+/** BOM */
+// navigator 识别浏览器类型
+const ua = navigator.userAgent
+const isChrome = ua.indexOf('Chrome')
+console.log(isChrome)
+// screen
+console.log(screen.width)
+console.log(screen.height)
+// location 拆解URL各个部分
+console.log(location.href)
+console.log(location.protocol) // 'http:' 'https:'
+console.log(location.pathname) // '/learn/199'
+console.log(location.search)
+console.log(localStorage.hash)
+// history
+history.back()
+history.forward() 
+
+/** 事件 */
+// 事件绑定
+function bindEvent(elem, type, fn) {
+    elem.addEventListener(type, fn)
+}
+const btn1 = document.getElementById('btn1')
+bindEvent(btn1, 'clicked', event => {
+    // console.log(event.target) // 获取触发的元素
+    event.preventDefault() // 阻止默认行为
+    alert('clicked')
+})
+// 事件冒泡
+const body = document.body
+bindEvent(body, 'clicked', event => {
+    console.log('body clicked')
+    console.log(event.target)
+})
+const div2 = document.getElementById('div2')
+bindEvent(div2, 'clicked', event => {
+    console.log('div2 clicked')
+    console.log(event.target)
+})
+// 事件激活
+const p1 = document.getElementById('p1')
+bindEvent(p1, 'click', event => {
+    event.stopPropagation() // 阻止冒泡
+    console.log('激活')
+})
+// 事件取消
+const body = document.body
+bindEvent(body, 'click', event => {
+    console.log('取消')
+})
