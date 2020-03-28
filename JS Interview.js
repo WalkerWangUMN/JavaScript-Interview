@@ -545,17 +545,36 @@ history.back()
 history.forward() 
 
 /** 事件 */
-// 事件绑定
-function bindEvent(elem, type, fn) {
-    elem.addEventListener(type, fn)
+// 事件绑定和代理
+function bindEvent(elem, type, selector, fn) {
+    if (fn == null) {
+        fn = selector
+        selector = null
+    }
+    elem.addEventListener(type, function(event) {
+        const target = event.target
+        if (selector) 
+            if (target.matches(selector)) fn.call(target, event) // 代理绑定
+        else fn.call(target, event) // 普通绑定
+    })
 }
 const btn1 = document.getElementById('btn1')
 bindEvent(btn1, 'clicked', event => {
     // console.log(event.target) // 获取触发的元素
     event.preventDefault() // 阻止默认行为
-    alert('clicked')
+    alert(this.innerHTML)
 })
-// 事件冒泡
+const div = document.getElementById('div')
+bindEvent(div, 'click', 'a', function(event) {
+    event.preventDefault()
+    alert(this.innerHTML)
+})
+
+/** 事件冒泡
+ * 基于DOM树形结构
+ * 事件顺着触发元素向上冒泡
+ * 应用场景: 代理
+ */
 const body = document.body
 bindEvent(body, 'clicked', event => {
     console.log('body clicked')
@@ -577,3 +596,102 @@ const body = document.body
 bindEvent(body, 'click', event => {
     console.log('取消')
 })
+/** 事件代理
+ * 代码简洁
+ * 减少浏览器内存占用
+ * 不要滥用: 事件瀑布流
+ */
+const div = document.getElementById('div')
+bindEvent(div, 'click', event => {
+    event.preventDefault()
+    const target = event.target
+    if (target.nodeName === 'A') alert(target.innerHTML)
+})
+/** 无限下拉图片列表 如何监听每个图片的点击
+ * 事件代理
+ * 用event.target获取触发元素
+ * 用matches判断是否触发元素
+ */
+
+ /** ajax */
+// XMLHttpRequest get请求
+const xhr = new XMLHttpRequest()
+xhr.open('GET', '/data/test.json', true)
+xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) // 函数异步执行
+        if (xhr.status === 200) alert(xhr.responseText) 
+}
+xhr.send(null)
+// XMLHttpRequest post请求
+const xhr = new XMLHttpRequest()
+xhr.open('POST', '/login', true)
+xhr.onreadystatechange = function () { // 函数异步执行
+    if (xhr.readyState === 4) {
+        if (xhr.status === 200) alert(xhr.responseText)
+        else if (xhr.status === 404) console.log('Not found') 
+    }
+}
+const postData = {
+    userName: 'ZW',
+    password: 'xxx'
+}
+xhr.send(JSON.stringify(postData))
+
+/** 手写ajax */
+function ajax(url) {
+    const p = new Promise ((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', url, true)
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status == 200)  resolve(JSON.parse(xhr.responseText))
+                else if (xhr.status === 404) reject(new Error('Not found')) 
+            }
+        }
+        xhr.send(null)
+    })
+    return p
+}
+
+const url = '/data/test.json'
+ajax(url).then(res => console.log(res)).catch(err => console.error(err))
+
+/** xhr.readyState
+ * 0-(未初始化) 还没调用send()方法
+ * 1-(载入) 已调用send()方法 正发送请求
+ * 2-(载入完成) send()方法执行完成 已接收到全部响应内容
+ * 3-(交互) 正在解析响应内容
+ * 4-(完成) 相应内容解析完成 可以在客户端调用
+ */
+
+/** 同源策略
+ * ajax请求时 浏览器要求当前网页和server必须同源
+ * 同源: 协议 域名 端口 三者必须一致
+ * 前端: http://a.com:8080/ server: https://b.com/api/xxx(端口default: 80)
+ */
+
+/** 加载图片css js可无视同源策略
+ * <img src = 跨域的图片地址 />
+ * <link href = 跨域的css地址 />
+ * <script src = 跨域的js地址></script>
+ * <img />可用于统计打点 可使用第三方统计服务
+ * <link /> <script>可使用CDN CDN一般都是外域
+ * <script>可实现JSONP
+ */
+
+ /** 跨域
+  * 所有的跨域必须经过server端允许和配合
+  * 未经server端允许就实现跨域 说明浏览器有漏洞 危险信号
+  */
+
+/** JSONP
+ * 服务器可任意动态拼接数据返回 只要符合HTML格式要求
+ * <script>可绕过跨域限制 可以获得跨域的数据 只要server端愿意返回
+ */
+<script>
+    window.callback = function(data) {
+        console.log(data)  // 跨域所得到的信息
+    }
+</script>
+<script src="https://ZW.com/getdata.js"></script>
+
