@@ -695,3 +695,43 @@ ajax(url).then(res => console.log(res)).catch(err => console.error(err))
 </script>
 <script src="https://ZW.com/getdata.js"></script>
 
+/** cookie
+ * 用于浏览器和server通讯
+ * 被借用来到本地存储
+ * 可用document.cookie = '...'来修改
+ * cookie缺点
+ * 存储大小 最大4kb
+ * HTTP请求时需要发送到服务端 增加请求数据量
+ * 只能用document.cookie = '...'来修改 过于简陋
+ */
+/** localStorage和sessionStorage
+ * HTML5专门为存储设计 最大可存5M
+ * API简单易用setItem getItem
+ * 不会随着HTTP请求被发送出去
+ * 区别
+ * localStorage数据会永久存储 除非代码或手动删除
+ * sessionStorage数据只存在当前会话 浏览器关闭则情况
+ * 用localStorage更多
+ */
+/** cookie localStorage和sessionStorage区别
+ * 容量
+ * API易用性
+ * 是否跟随HTTP请求发送出去
+ */
+/** 开发环境
+ * git
+ * 调试工具
+ * 抓包
+ * webpack babel
+ * Linux常用命令
+ */
+/** git
+ * git add .
+ * git checkout xxx
+ * git commit -m "xxx"
+ * git push origin master
+ * git pull origin master
+ * git branch
+ * git checkout -b xxx
+ * git merge xxx
+ */
