@@ -1,0 +1,25 @@
+{
+  "name": "JavaScript-Interview",
+  "version": "1.0.0",
+  "description": "JS Interview questions",
+  "main": "JS Interview.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WalkerWangUMN/JavaScript-Interview.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WalkerWangUMN/JavaScript-Interview/issues"
+  },
+  "homepage": "https://github.com/WalkerWangUMN/JavaScript-Interview#readme",
+  "devDependencies": {
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  }
+}
