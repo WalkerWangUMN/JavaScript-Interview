@@ -754,3 +754,151 @@ ajax(url).then(res => console.log(res)).catch(err => console.error(err))
  */
 
 /** babel将ES6转ES5 */
+
+/** 从输入URL到渲染出页面的整个过程
+ * 加载过程
+ * DNS解析: 域名 -> IP地址
+ * 浏览器根据IP地址向服务器发起HTTP请求
+ * 服务器处理HTTP请求 并返回给浏览器
+ * 渲染过程-1
+ * 根据HTML代码生成DOM Tree
+ * 根据CSS代码生成CSSOM
+ * 将DOM Tree和CSSOM整合为Render Tree
+ * 渲染过程-2
+ * 根据Render Tree渲染页面
+ * 遇到<script>暂停渲染 优先加载并执行JS代码 完成再继续
+ * 直到把Render Tree渲染完成
+ */
+
+/** CSS放在head的原因
+ * 把CSS规则在DOM Tree生成前就加载完 
+ * DOM Tree直接和所有的CSS整合生成Render Tree
+ * 避免重复渲染
+ */
+
+/** JS放在body最后的原因
+ * 先把HTML渲染完成 再执行script
+ */
+
+/** window.onload和DOMContentLoaded
+ * window.addEventListener('load', function() {
+ *    // 页面全部资源加载完才会执行 包括图片 视频
+ * })
+ * document.addEventListener('DOMContentLoaded', function() {
+ *    // DOM渲染完即可执行 此时图片 视频可能还没加载完
+ * })
+ */
+
+/** 性能优化原则(空间换时间)
+ * 多使用内存 缓存
+ * 减少CPU计算量 减少网络加载耗时
+ */
+
+/** 让加载更快
+ * 减少资源体积: 压缩代码
+ * 减少访问次数: 合并代码 SSR服务器端渲染 缓存
+ * 使用更快的网络: CDN
+ */
+
+/** 让渲染更快
+ * CSS放head JS放body下
+ * 尽早执行JS 用DOMContentLoaded触发
+ * 懒加载(图片懒加载 上滑加载更多)
+ * 对DOM查询进行缓存
+ * 频繁DOM操作 合并到一起插入DOM结构
+ * 节流throttle 防抖debounce
+ */
+/** 缓存
+ * 静态资源加hash后缀 根据文件内容计算hash
+ * 文件内容不变 则hash不变 url不变
+ * url和文件不变 则会自动触发HTTP缓存机制 返回304
+ */
+
+/** CDN */
+
+/** SSR
+ * 服务器渲染: 将网页和数据一起加载 一起渲染
+ * 非SSR(前后端分离): 先加载网页 再加载数据 再渲染数据
+ * 早先的JSP ASP PHP 现在的Vue React
+ */
+
+/** 懒加载 */
+
+/** 缓存DOM查询 */
+
+/** 多个DOM操作一起插入到DOM结构 */
+
+/** 尽早开始JS执行 */
+
+/** 手写debounce 
+ * 监听输入框的文字变化后触发change事件
+ * 直接用keyup事件 则会频繁促发change事件
+ * debounce: 用户输入结束或暂停时 才会触发change事件
+*/
+const input1 = document.getElementById('input1')
+// let timer = null
+// input1.addEventListener('keyup', function() {
+//     if (timer) clearTimeout(timer)
+//     timer = setTimeout(() => {
+//         console.log(input1.value) // 模拟触发change事件 
+//         timer = null //清空定时器
+//     }, 500);
+// })
+
+function debounce(fn, delay = 500) {
+    let timer = null // timer是在闭包中的
+    return function () {
+        if (timer) clearTimeout(timer)
+        timer = setTimeout(() => {
+            fn.apply(this, arguments)
+            timer = null
+        }, delay);
+    }
+}
+input1.addEventListener('keyup', debounce(function() {
+    console.log(input1.value)
+}), 600)
+
+/** 手写throttle
+ * 拖拽一个元素时 要随时拿到该元素被拖拽的位置
+ * 直接用drag事件 则会频繁触发 很容易导致卡顿
+ * throttle: 无论拖拽多块 都会每个100ms触发一次
+ */
+const div1 = document.getElementById('div1')
+// let timer = null
+// div1.addEventListener('drag', function(e) {
+//     if (timer) return
+//     timer = setTimeout(() => {
+//         console.log(e.offsetX, e.offsetY)
+//         timer = null
+//     }, 100);
+// })
+
+function throttle(fn, delay = 100) {
+    let timer = null
+    return function() {
+        if (timer) return
+        timer = setTimeout(() => {
+            fn.apply(this, arguments)
+            timer = null
+        }, delay);
+    }
+}
+div1.addEventListener('drag', throttle(function(e) {
+    console.log(e.offsetX, e.offsetY)
+}, 200))
+
+/** 安全
+ * XSS跨站请求攻击
+ * XSRF跨站请求伪造
+ */
+
+/** XSS预防
+ * 替换特殊字符 e.g: < -> &lt; > -> &gt;
+ * <script> -> &lt; script&gt; ,直接显示 而不会作为脚本执行
+ */
+
+/** XSRF预防
+ * 使用post接口
+ * 增加密码验证
+ */
