@@ -108,7 +108,7 @@ class People { // 父类
         this.name = name
     }
     eat() {
-        console.log(this.name + 'eat something')
+        console.log(this.name, 'eat something')
     }
 }
 
@@ -118,7 +118,7 @@ class Student extends People { // 子类
         this.number = number
     }
     sayHi() {
-        console.log ('Name: ' + this.name + ', StudentId: ' + this.number)
+        console.log ('Name: ', this.name, ', StudentId: ', this.number)
     }
 }
 
@@ -410,7 +410,7 @@ function loadImg(src) {
             resolve(img)
         }
         img.onerror = () => { // 加载失败
-            const err = new Error ('图片加载失败' + src)
+            const err = new Error ('图片加载失败', src)
             reject(err)
         }
         img.src = src
