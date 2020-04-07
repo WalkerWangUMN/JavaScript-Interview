@@ -1,8 +1,5 @@
 /**
  * @author Zhaoyu Wang
- * @email wang9535@umn.edu
- * @create date 2020-03-24 20:17:00
- * @modify date 2020-03-24 20:17:00
  * @desc Basic JavaScript Interview questions
  */
 
@@ -144,7 +141,7 @@ typeof Student // 'function'
 
 /** 原型关系
  * 每个class都有显式原型prototype
- * 每个对象都有隐式原型 _proto
+ * 每个对象都有隐式原型 _proto_
  * 实例的_proto_指向对应class的prototype
  */
 console.log(xiaoluo._proto_) // 隐式原型
@@ -192,8 +189,8 @@ console.log(x) // 会报错: x is not defined
 
 /** 闭包
  * 作用域引用的特殊情况 有两种表现:
- * 函数作为参数被传递
  * 函数作为返回值被返回
+ * 函数作为参数被传递
 */
 /** 所有自由变量的查找 是在函数定义的地方 向上级作用域 不是在执行的地方 */
 // 函数作为返回值被返回
